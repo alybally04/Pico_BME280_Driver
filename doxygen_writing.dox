@@ -20,7 +20,7 @@
     Finally you must link to the driver using `target_link_library`. An example of all this is in the GitHub repository and immediately below.
 
         # Add the driver to the CMake project
-        add_subdirectory(BME280_Driver_v1.0.0)
+        add_subdirectory(BME280_Driver_v1.0.0) # Example directory name, can be named anything
 
         ...
 
