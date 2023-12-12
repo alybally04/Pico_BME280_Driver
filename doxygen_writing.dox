@@ -15,12 +15,12 @@
 
     First download the driver from the <a href="https://github.com/alybally04/Pico_BME280_Driver/releases" target="_blank">GitHub releases page</a>.
 
-    Next place the "Pico_BME280_Driver" directory in your project directory and use `add_subdirectory` to add the driver to your CMake project.
+    Next place the driver directory in your project directory and use `add_subdirectory` to add the driver to your CMake project.
 
     Finally you must link to the driver using `target_link_library`. An example of all this is in the GitHub repository and immediately below.
 
         # Add the driver to the CMake project
-        add_subdirectory(Pico_BME280_Driver)
+        add_subdirectory(BME280_Driver_v1.0.0)
 
         ...
 
@@ -63,7 +63,7 @@
     <br>
     Provide these in the `config` parameter of `bme280_init()` or `bme280_update_settings()`, bitwise OR'd together.
 
-    BME280_<x>_OVERSAMPLE_<y> is the oversampling rate of a given parameter, where x is one of T/H/P (for temperature or humidity or pressure)
+    BME280_<x>\_OVERSAMPLE\_<y> is the oversampling rate of a given parameter, where x is one of T/H/P (for temperature or humidity or pressure)
     and y is NONE/1/2/4/8/16 (For oversampling amount).
     <br>
     Provide these in the temperature_oversample, humidity_oversample, pressure_oversample parameters of `bme280_init()` or `bme280_update_settings()`
