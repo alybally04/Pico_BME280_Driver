@@ -1,0 +1,81 @@
+/**
+    \mainpage BME280 "Plug and Play" Driver for the Raspberry Pi Pico/Pico W
+
+    \section introduction_sec Introduction
+
+    This is a simple driver for the Bosch BME280 Sensor that I wrote for my own use. It supports all modes and settings of operation. Below is an explanation of its usage.
+
+    Full documentation of the driver can be found in `bme280_defs.h` and `bme280_driver.h`
+
+    Information about the sensor, including explanations of the different settings and recommended settings for use cases can be found in <a href="https://web.archive.org/web/20231212102710/https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf" target="_blank">the BME280 datasheet</a>.
+
+    Please Note: This driver is NOT threadsafe, and you must not access a single sensor instance from multiple threads simultaneously.
+
+    \section installing_sec Installing
+
+    First download the driver from the <a href="https://github.com/alybally04/Pico_BME280_Driver/releases" target="_blank">GitHub releases page</a>.
+
+    Next place the "Pico_BME280_Driver" directory in your project directory and use `add_subdirectory` to add the driver to your CMake project.
+
+    Finally you must link to the driver using `target_link_library`. An example of all this is in the GitHub repository and immediately below.
+
+        # Add the driver to the CMake project
+        add_subdirectory(Pico_BME280_Driver)
+
+        ...
+
+        # Link your executable to the driver
+        target_link_libraries(your_executable
+                Pico_BME280_Driver
+        )
+
+    \section using_sec Using the driver
+
+    Below is a writeup describing how to use the driver. You can find the synopsis of all driver types and functions in this documentation, and
+    a full example of the driver in the GitHub repository in `example/example.c`.
+
+    Include the driver in your code using `#include "bme280_driver.h"`.
+
+    Create a struct of type `bme280_inst` to hold the sensor instance and call `bme280_init()` to initialise the sensor with the provided settings.
+
+    If you do not know the i2c address of your sensor (typically 0x76 or 0x77) you can call `get_bme280_addrs()`, which returns
+    a dynamically allocated (meaning you must call free() on it when you are done using it) array of uint8_t holding sensor addresses where the 0th index value is the length of the array.
+    If the length is 0 then no sensor was found.
+
+    Next call `bme280_forced_read()`/`bme280_normal_read()` (depending on selected mode) to update the temperature, humidity, and pressure values in the sensor struct with the latest readings.
+    These methods can be called as often as you wish.
+
+    You can access the raw values of the sensor directly from the sensor struct (fields: `sensor->temperature`, `sensor->humidity`, `sensor->pressure`).
+    Alternatively you can call `bme280_fmt_<temp/humid/pressure>()` to get a formatted string containing the sensor values to 2 decimal points.
+
+    If you want to change the sensor's settings you can call `bme280_update_settings()`.
+
+    When you are done with the sensor call `bme280_deinit()`, which will reset the sensor and put it back into sleep mode and clear the sensor struct.
+
+    \section constants_sec Constants and Options
+
+    All constants, sensor settings option, and error codes are defined in `bme280_defs.h`. Below is an overview of their use.
+
+    `BME280_INACTIVE_MS_<x>_<y>` is the length of time between readings when using normal mode, where x is the integer part and y is the fractional part.
+    (e.g. BME280_INACTIVE_MS_62_5 is 62.5 ms)
+    <br>
+    `BME280_FILTER_<x>` is the IIR filter coefficient, where x is the coefficient.
+    <br>
+    Provide these in the `config` parameter of `bme280_init()` or `bme280_update_settings()`, bitwise OR'd together.
+
+    BME280_<x>_OVERSAMPLE_<y> is the oversampling rate of a given parameter, where x is one of T/H/P (for temperature or humidity or pressure)
+    and y is NONE/1/2/4/8/16 (For oversampling amount).
+    <br>
+    Provide these in the temperature_oversample, humidity_oversample, pressure_oversample parameters of `bme280_init()` or `bme280_update_settings()`
+
+    BME_<x>_MODE is a sensor operation mode, where x is one of SLEEP/NORMAL/FORCED. The BME280 datasheet contains information about the different modes of operation.
+    <br>
+    Provide this in the mode parameter of `bme280_init()` or `bme280_update_settings()`
+
+    BME_OK is the return code for success, BME280_ERR is a generic error, all others errors are explained in `bme280_defs.h`
+
+    BME280_<x>_STRLEN defines the minimum string length for a formatted string returned by the reading format function defined in `bme280_driver.h`,
+    where x is one of T/H/P (for temperature or humidity or pressure).
+    <br>
+    You must ensure that the destination string for the string format functions is at least the length of its corresponding STRLEN.
+*/
