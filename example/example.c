@@ -35,7 +35,7 @@ int main()
     printf("\n\nInitialising sensor to perform forced read...\n");
     // initialise sensor instance
     struct bme280_inst sensor;
-    int8_t res = bme280_init(i2c0, found_addrs[1], &sensor, BME280_FORCED_MODE, 0, BME280_T_OVERSAMPLE_1, BME280_H_OVERSAMPLE_1, BME280_P_OVERSAMPLE_1);
+    int8_t res = bme280_init(i2c0, found_addrs[1], &sensor, BME280_FORCED_MODE, BME280_FILTER_OFF, BME280_T_OVERSAMPLE_1, BME280_H_OVERSAMPLE_1, BME280_P_OVERSAMPLE_1);
     if (res != BME280_OK)
     {
         printf("Error: failed to initialise sensor with error code %s...\n", bme280_strerr(res));
@@ -64,7 +64,7 @@ int main()
     }
 
     printf("\nSwitching to normal mode...\n");
-    res = bme280_update_settings(&sensor, BME280_NORMAL_MODE, 0, BME280_T_OVERSAMPLE_1, BME280_H_OVERSAMPLE_1, BME280_P_OVERSAMPLE_1);
+    res = bme280_update_settings(&sensor, BME280_NORMAL_MODE, BME280_FILTER_OFF | BME280_INACTIVE_MS_125, BME280_T_OVERSAMPLE_1, BME280_H_OVERSAMPLE_1, BME280_P_OVERSAMPLE_1);
     if (res != BME280_OK)
     {
         printf("Error: failed to update settings with error code %s...\n", bme280_strerr(res));
