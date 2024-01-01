@@ -4,7 +4,7 @@
 I wrote this driver for my own use and it is available under the MIT Licence for anyone else who wants to use it. All sensor
 modes, settings and configurations are supported.
 
-Extensive documentation is available at the link below.
+Documentation is available at the link below and in the header files.
 
 
 ## Installation and usage

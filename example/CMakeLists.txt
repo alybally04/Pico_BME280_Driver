@@ -2,8 +2,6 @@ add_executable(pico_example
         example.c
 )
 
-target_compile_options(pico_example PRIVATE -O3)
-
 target_include_directories(pico_example PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
