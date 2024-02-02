@@ -50,9 +50,7 @@ uint8_t * get_bme280_addrs(i2c_inst_t *i2c_bus)
     for (uint8_t addr = 0; addr < 128; addr++)
     {
         if (i2c_reserved_addr(addr))
-        {
             continue;
-        }
 
         uint8_t rt_data;
         if (i2c_read_blocking(i2c_bus, addr, &rt_data, 1, false) != PICO_ERROR_GENERIC)
@@ -68,15 +66,13 @@ uint8_t * get_bme280_addrs(i2c_inst_t *i2c_bus)
                     return NULL;
                 }
                 else
-                {
                     addrs = (uint8_t *)new;
-                }
             }
             else
             {
                 // add address to the furthest back pos and inc count
                 addrs[addrs[0]] = addr;
-                addrs[0]++;
+                ++addrs[0];
             }
         }
     }
@@ -87,9 +83,7 @@ uint8_t * get_bme280_addrs(i2c_inst_t *i2c_bus)
         return NULL;
     }
     else
-    {
         return addrs;
-    }
 }
 
 int read_bme280(struct bme280_inst *sensor_inst, uint8_t reg_addr, uint8_t *read_dest, int to_read)
@@ -97,6 +91,7 @@ int read_bme280(struct bme280_inst *sensor_inst, uint8_t reg_addr, uint8_t *read
     if (i2c_write_blocking(&sensor_inst->i2c_b, sensor_inst->sens_addr, &reg_addr, 1, true) == PICO_ERROR_GENERIC)
         return BME280_ERR;
 
+    // storing this res for returning number of bytes read
     int res = i2c_read_blocking(&sensor_inst->i2c_b, sensor_inst->sens_addr, read_dest, to_read, true);
     if (res == PICO_ERROR_GENERIC)
         return BME280_ERR;
@@ -108,9 +103,8 @@ int write_bme280(struct bme280_inst *sensor_inst, uint8_t *data, int to_write)
 {
     int res = i2c_write_blocking(&sensor_inst->i2c_b, sensor_inst->sens_addr, data, to_write, true);
     if (res == PICO_ERROR_GENERIC)
-    {
         return BME280_ERR;
-    }
+
     return res;
 }
 
@@ -138,9 +132,8 @@ uint32_t BME280_compensate_P_int64(struct bme280_inst *sensor_inst, int32_t raw_
     var1 = ((var1 * var1 * (int64_t)sensor_inst->dig_P3)>>8) + ((var1 * (int64_t)sensor_inst->dig_P2)<<12);
     var1 = (((((int64_t)1)<<47)+var1))*((int64_t)sensor_inst->dig_P1)>>33;
     if (var1 == 0)
-    {
         return 0; // avoid exception caused by division by zero
-    }
+
     p = 1048576 - raw_P;
     p = (((p<<31)-var2)*3125)/var1;
     var1 = (((int64_t)sensor_inst->dig_P9) * (p>>13) * (p>>13)) >> 25;

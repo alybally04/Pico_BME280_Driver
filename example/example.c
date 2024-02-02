@@ -8,6 +8,7 @@
 int main()
 {
     stdio_init_all();
+    // enough time to connect to stdio
     sleep_ms(5000);
 
     // start i2c
